@@ -4,6 +4,7 @@ In many restaurants, waiters/waitress tend to miss out on customers call during 
 Many of the benefits associated with the use of restaurant management systems are related to automation and speeding up processes to improve the customer experience. Modern customers expect fast, frictionless service and restaurant management software play a key role in meeting these expectations.Additionally, such solutions can serve as a critical piece of restaurant technology because they bring so many different processes together in a single location.
 
 **PROPOSED SYSTEM**
+
 Nowadays, many restaurants manage their business by manual especially like taking customer order.Restaurant waiter takes the customer ordering by manual system with using paper. Customer does some formal conversation like hello, hi, etc. Than he demands for today’s menu and do some discussion over menu items then he orders. It takes 5 to 10 minutes to book the order and waiter book the order on paper so there is probability of losing the information.
 
 There might be some communication problems or sometimes language might be a barrier. As a result, the current system (manual system) is not effective and efficient to use anymore. As entire booking has to be done manually at the restaurant end, the chances of occurrence of mistakes is high as well. The current system cannot save, manage and monitor menu information, customer ordering information and generate receipt as well
