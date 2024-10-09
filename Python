@@ -1,0 +1,459 @@
+from prettytable import PrettyTable
+import time
+
+password = 'happycup'
+ID = {}
+
+
+while True:
+    print("\n-------------------------")
+    print("WELCOME TO HAPPY CUP CAFE")
+    print("-------------------------\n")
+    print("1. Add an item to the menu.[ADMINISTRATOR]")
+    print("2. Update the menu.[ADMINISTRATOR]")
+    print("3. Remove an item from the menu.[ADMINISTRATOR]")
+    print("4. Search for an item in menu.")
+    print("5. Display menu.")
+    print("6. New Customer.")
+    print("7. Order Food.")
+    print("8. Receipt.")
+    print("9. Exit.")
+    ch = int(input("\nEnter Your Choice:"))
+
+    #1.Add To Menu
+   
+    if ch == 1:
+        import mysql.connector as mc
+        con = mc.connect(host ='localhost',user='root',passwd='francisa3',database='restaurant',charset ='utf8',auth_plugin='mysql_native_password' )
+        c = con.cursor()
+        PW = input("Enter the password:")
+        if password == PW :
+            print("Password is correct")
+            print("\nWELCOME ADMINISTRATOR")
+            print("---------------------\n")
+            R = int(input("Enter the number of items to be added:"))
+            for i in range(0,R,1):
+                query ='SELECT MAX(MENU_NO) FROM MENU'
+                c.execute(query)
+                d = c.fetchone()
+                for i in d:
+                    MenuNo = i+1
+                print("\n\nMenu number:",MenuNo)
+                item = input("Enter the name of the new item:")
+                item = item.title()
+                option = int(input("Enter the dietary option(1.VEG/2.NON-VEG/3.BOTH):"))
+                if option == 1:
+                    option = 'VEG'
+                elif option == 2:
+                    option = 'NON-VEG'
+                elif option == 3:
+                    option = 'BOTH'
+                else:
+                    print("Enter the correct option(1-3)...")
+                    break
+               
+                cash = float(input("Enter the price of the new item: Rs."))
+                genre = int(input("Enter the category of the new item (1.Soup/ 2.Main Course/ 3.Pizza/ 4.Mocktail/ 5.Dessert):"))
+                if genre == 1:
+                    genre = 'Soup'
+                elif genre == 2:
+                    genre = 'Main Course'
+                elif genre == 3:
+                    genre = 'Pizza'
+                elif genre == 4:
+                    genre = 'Mocktail'
+                elif genre == 5:
+                    genre = 'Dessert'
+                else:
+                    print("Enter the correct option(1-5)...")
+                    break
+                insert = "INSERT INTO MENU VALUES({},'{}','{}','{}',{})".format(MenuNo,item,option,genre,cash)
+                c.execute(insert)
+                con.commit()
+                print("\n\nNew menu is:",)
+                Q = "SELECT * FROM MENU WHERE MENU_NO = {}".format(MenuNo)
+                c.execute(Q)
+                d = c.fetchall()
+                for i in d:
+                    print(i)
+            c.close()
+            con.close()
+        else:
+            print("Incorrect Password....\nTry Again")
+
+    #2.Update Menu
+    elif ch == 2:
+        import mysql.connector as mc
+        con = mc.connect(host ='localhost',user='root',passwd='francisa3',database='restaurant',charset ='utf8',auth_plugin='mysql_native_password' )
+        c = con.cursor()
+        PW = input("Enter the password:")
+        if password == PW :
+            print("Password is correct")
+            print("\nWELCOME ADMINISTRATOR")
+            print("---------------------\n")
+            R = int(input("Enter the number of items to be updated:"))
+            for i in range(0,R,1):
+                MenuNo = int(input("\nEnter the menu number to be updated:"))
+                Update = int(input("Enter your choice to be updated(1.Name/ 2.Diet/ 3.Price/ 4.Category):"))
+                if Update == 1:
+                    c = con.cursor()
+                    name = input("Enter the new name of the item:")
+                    update = "UPDATE MENU SET NAME = '{}' WHERE MENU_NO ={}".format(name,MenuNo)
+                    c.execute(update)
+                    con.commit()
+                elif Update == 2:
+                    c = con.cursor()
+                    diet = input("Enter the new dietary option of the item (VEG/NON-VEG/BOTH):")
+                    update = "UPDATE MENU SET DIET = '{}' WHERE MENU_NO ={}".format(diet,MenuNo)
+                    c.execute(update)
+                    con.commit()
+                elif Update == 3:
+                    c = con.cursor()
+                    price = int(input("Enter the new price of the item: Rs."))
+                    update = "UPDATE MENU SET PRICE = '{}' WHERE MENU_NO ={}".format(price,MenuNo)
+                    c.execute(update)
+                    con.commit()
+               
+                elif Update == 4:
+                    c = con.cursor()
+                    category = input("Enter the new category of the item (Soup/Main Course/Pizza/Mocktail/Dessert):")
+                    update = "UPDATE MENU SET CATEGORY = '{}' WHERE MENU_NO ={}".format(category,MenuNo)
+                    c.execute(update)
+                    con.commit()
+                else:
+                        print("Enter the correct key option(1-4).....")
+               
+        else:
+            print("Incorrect Password....\nTry Again")
+        c.close()
+        con.close()
+
+    #Remove From The Menu        
+    elif ch == 3:
+        import mysql.connector as mc
+        con = mc.connect(host ='localhost',user='root',passwd='francisa3',database='restaurant',charset ='utf8',auth_plugin='mysql_native_password' )
+        c = con.cursor()
+        PW = input("Enter the password:")
+        if password == PW :
+            print("Password is correct")
+            print("\nWELCOME ADMINISTRATOR")
+            print("---------------------\n")
+            R = int(input("Enter the number of items to be deleted:"))
+            for i in range(0,R,1):
+                MenuNo = int(input("\nEnter the menu number:"))
+                query = "SELECT * FROM MENU WHERE MENU_NO = {}".format(MenuNo)
+                c.execute(query)
+                d = c.fetchall()
+                for i in d:
+                    print(i)
+                Ans = input("Are you sure you want to delete (Y/N): ")
+                if Ans == 'Y' or Ans == 'y':
+                    print("Deleting Menu Number -",MenuNo,".......")
+                    delete = "DELETE FROM MENU WHERE MENU_NO = {}".format(MenuNo)
+                    c.execute(delete)
+                    con.commit()
+                   
+                elif Ans == 'N' or Ans == 'n':
+                    print("Menu number -", MenuNo ," not deleted...")
+            c.close()
+            con.close()
+        else:
+            print("Incorrect Password....\nTry Again")
+
+    #Search An Item                
+    elif ch == 4:
+        import mysql.connector as mc
+        con = mc.connect(host ='localhost',user='root',passwd='francisa3',database='restaurant',charset ='utf8',auth_plugin='mysql_native_password' )
+        c = con.cursor()
+        print("\nWELCOME CUSTOMER")
+        print("Search by:")
+        print("1. Menu Number")
+        print("2. Name")
+        print("3. Dietary Option(VEG / NON-VEG)")
+        print("4. Price Range")
+        print("5. Food Category")
+        sb = int(input("Enter Your Choice:"))
+
+        #Search by menu number
+        if sb == 1:
+            MenuNo = int(input("\nEnter the menu number:"))
+            query = "SELECT * FROM MENU WHERE MENU_NO = {}".format(MenuNo)
+            c.execute(query)
+            d = c.fetchall()
+            for i in d:
+                print(i)
+            print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+
+        #Search by name of food        
+        elif sb == 2:
+            F =0
+            name = input("\nEnter the name of the food:")
+            name = name.title()
+            query = "SELECT * FROM MENU WHERE NAME = '{}'".format(name)
+            c.execute(query)
+            d = c.fetchall()
+            for i in d:
+                print(i)
+            print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+
+        #Search by dietary option                
+        elif sb == 3:
+            diet = int(input("\nEnter the dietary option (1.VEG / 2.NON-VEG):"))
+            if diet == 1:
+                diet = 'VEG'
+            elif diet == 2:
+                diet = 'NON-VEG'
+            else:
+                print("Enter the  correct option(1,2).....")
+                break
+            query = "SELECT * FROM MENU WHERE DIET = '{}' OR DIET = 'BOTH'".format(diet)
+            c.execute(query)
+            d = c.fetchall()
+            for i in d:
+                print(i)
+            print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+                   
+        #Search by price range            
+        elif sb == 4:
+            UB = int(input("\nEnter the upper price bound:"))
+            LB = int(input("Enter the lower price bound:"))
+            query = "SELECT * FROM MENU WHERE PRICE BETWEEN {} AND {}".format(LB,UB)
+            c.execute(query)
+            d = c.fetchall()
+            for i in d:
+                print(i)
+            print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+           
+
+        #Search by category            
+        elif sb == 5:
+            print("\n1. Soup")
+            print("2. Main Course")
+            print("3. Pizza")
+            print("4. Mocktail")
+            print("5. Dessert")
+            ct = int(input("\nEnter your Choice:"))
+
+            #Soup
+            if ct == 1:
+                print("\n\t\t\t\t\t\t\t\tSOUP")
+                print("\t\t\t\t\t\t\t\t----\n")
+                query = "SELECT * FROM MENU WHERE CATEGORY = 'Soup'"
+                c.execute(query)
+                d = c.fetchall()
+                for i in d:
+                    print(i)
+                print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+                   
+
+            #Main Course
+            elif ct == 2:
+                print("\n\t\t\t\t\t\t\t\tMAIN COURSE")
+                print("\t\t\t\t\t\t\t\t-----------\n")
+                query = "SELECT * FROM MENU WHERE CATEGORY = 'Main Course'"
+                c.execute(query)
+                d = c.fetchall()
+                for i in d:
+                    print(i)
+                print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+                       
+
+            #Pizza
+            elif ct == 3:
+                print("\n\t\t\t\t\t\t\t\tPIZZA")
+                print("\t\t\t\t\t\t\t\t-----\n")
+                query = "SELECT * FROM MENU WHERE CATEGORY = 'Pizza'"
+                c.execute(query)
+                d = c.fetchall()
+                for i in d:
+                    print(i)
+                print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+                       
+
+            #Mocktail  
+            elif ct == 4:
+                print("\n\t\t\t\t\t\t\t\tMOCKTAIL")
+                print("\t\t\t\t\t\t\t\t--------\n")
+                query = "SELECT * FROM MENU WHERE CATEGORY = 'Mocktail'"
+                c.execute(query)
+                d = c.fetchall()
+                for i in d:
+                    print(i)
+                print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+                       
+
+            #Dessert
+            elif ct == 5:
+                print("\n\t\t\t\t\t\t\t\tDESSERT")
+                print("\t\t\t\t\t\t\t\t-------\n")
+                query = "SELECT * FROM MENU WHERE CATEGORY = 'Dessert'"
+                c.execute(query)
+                d = c.fetchall()
+                for i in d:
+                    print(i)
+                print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+                   
+            else:
+                print("Enter the correct option(1-5).....")
+               
+        else:
+            print("Enter the correct option.....")
+
+        c.close()
+        con.close()
+       
+    #Display Menu        
+    elif ch == 5:
+        import mysql.connector as mc
+        con = mc.connect(host ='localhost',user='root',passwd='francisa3',database='restaurant',charset ='utf8',auth_plugin='mysql_native_password' )
+        c = con.cursor()
+        print("\t\t\t\t\t\t\tHAPPY CUP CAFE MENU")
+        print("\t\t\t\t\t\t\t-------------------")
+        while True:
+            print("\nDisplay:")
+            print("1. Soup")
+            print("2. Main Course")
+            print("3. Pizza")
+            print("4. Mocktail")
+            print("5. Dessert")
+            print("6. Exit")
+            d = int(input("Enter your choice: "))
+
+           
+            if d == 1:
+                print("\nSOUP")
+                print("----\n")
+                query = "SELECT * FROM MENU WHERE CATEGORY = 'Soup'"
+                c.execute(query)
+                d = c.fetchall()
+                for i in d:
+                    print(i)
+                print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+                       
+
+            elif d == 2:
+                print("\nMAIN COURSE")
+                print("-----------\n")
+                query = "SELECT * FROM MENU WHERE CATEGORY = 'Main Course'"
+                c.execute(query)
+                d = c.fetchall()
+                for i in d:
+                    print(i)
+                print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+                   
+
+            elif d == 3:
+                print("\nPIZZA")
+                print("-----\n")
+                query = "SELECT * FROM MENU WHERE CATEGORY = 'Pizza'"
+                c.execute(query)
+                d = c.fetchall()
+                for i in d:
+                    print(i)
+                print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+                       
+
+            elif d == 4:
+                print("\nMOCKTAIL")
+                print("--------\n")
+                query = "SELECT * FROM MENU WHERE CATEGORY = 'Mocktail'"
+                c.execute(query)
+                d = c.fetchall()
+                for i in d:
+                    print(i)
+                print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+                       
+
+            elif d == 5:
+                print("\nDESSERT")
+                print("-------\n")
+                query = "SELECT * FROM MENU WHERE CATEGORY = 'Dessert'"
+                c.execute(query)
+                d = c.fetchall()
+                for i in d:
+                    print(i)
+                print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+                   
+
+            elif d == 6:
+                break
+
+            else:
+                print("\nEnter the correct option(1-6).....")
+        c.close()
+        con.close()
+
+    #New Customer    
+    elif ch == 6:
+        bill_id = int(input("Enter table Number:"))
+        name = input("Enter your name:")
+        name = name.title()
+        Dict = dict(Name = name , Orders = [] )
+        ID[bill_id] = Dict
+
+    #Order Food
+    elif ch == 7:
+        cash = 0.00
+        bill_id = int(input("Enter your Table No:"))
+        if bill_id not in ID.keys():
+            print("Wrong Entry...\nIf you are a new customer book a table by choosing option 6.")
+        else:
+            for bid in ID.keys() :
+                if bid == bill_id:
+                    print("Hello",ID[bid]['Name'],"!!")
+                    while True:
+                        MenuNo = int(input("\nEnter the menu number:"))
+                        quant = int(input("Enter the quantity of food item:"))
+                        T = tuple([MenuNo , quant])
+                        ID[bill_id]['Orders'].append(T)
+                        ANS = input("Continue ordering food (Y/N):")
+                        if ANS == 'N' or ANS == 'n':
+                            print("\nThank you for ordering!!")
+                            break
+    #Receipt                        
+    elif ch == 8:
+        import mysql.connector as mc
+        con = mc.connect(host ='localhost',user='root',passwd='francisa3',database='restaurant',charset ='utf8',auth_plugin='mysql_native_password' )
+        c = con.cursor()
+        x = PrettyTable()
+        bill = int(input("Enter your Table Number:"))
+        print("\n\n")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("\t\t\t\t\t\t\t\tHAPPY CUP CAFE")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("Table Number :",bill)
+        print("Customer Name: ",ID[bill]['Name'])
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        x.field_names = ["Sl.No", "Items", "Price", "Quantity","Total"]
+        od = ID[bill]['Orders']
+        l = len(od)
+        C = 1
+        tot_quant = 0
+        total_amt = 0.00
+        for i in range(0,l,1):
+            MenuNo = od[i][0]
+            quant = od[i][1]
+            query = "SELECT * FROM MENU WHERE MENU_NO = {}".format(MenuNo)
+            c.execute(query)
+            d = c.fetchall()
+            for i in d:
+                name = i[1]
+                cash = i[4]
+                tot_quant = tot_quant + int(quant)
+                total = cash * quant
+                total_amt = total_amt + total
+                x.add_row([C,name, cash, quant, total])
+                C += 1
+        c.close()
+        con.close()  
+        print(x)
+        print("\nGrand Total: Rs.",total_amt)
+        print("Total Quantity: ",tot_quant)
+       
+    #Exit    
+    elif ch == 9:
+        print("\nThank you for ordering....\nVisit Again!!")
+        break
+         
+    else:
+        print("Enter the correct option(1-9).....")
